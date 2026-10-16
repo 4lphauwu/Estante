@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minha Estante</title>
+<meta name="theme-color" content="#14172b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f7;--card:#fff;--ink:#14172b;--muted:#5b6180;--line:#14172b;--shadow:#14172b;--cta:#ffd23f;--cta-ink:#14172b;--hot:#e8236b;--head:#14172b;--chip:#dfe4f3;--star:#f5a000;--star-off:#c9cfe6;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0d0f1e;--card:#171a30;--ink:#eef0ff;--muted:#9aa1c8;--line:#3b4275;--shadow:#04050c;--hot:#ff5c98;--head:#080a16;--chip:#252a52;--star:#ffbf2e;--star-off:#394070;color-scheme:dark}}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--head);color:#fff;padding:12px 14px}
+.in{max-width:1100px;margin:0 auto;display:grid;gap:10px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.row{display:flex;gap:8px}
+h1,h2{margin:0;font:800 1.4rem/1 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.02em}
+h2{font-size:1.3rem}
+input,select,textarea{font:400 1rem/1.3 system-ui,sans-serif;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+#q{border-radius:10px;padding:10px 14px}
+.btn{font:700 .92rem system-ui,sans-serif;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;box-shadow:3px 3px 0 var(--shadow);text-decoration:none;display:inline-block}
+.btn.cta{background:var(--cta);color:var(--cta-ink);border-color:var(--cta-ink)}
+.btn[aria-pressed="true"]{background:var(--hot);color:#fff}
+.link{font:inherit;font-weight:700;color:var(--ink);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer;justify-self:start}
+main{max-width:1100px;margin:0 auto;padding:14px 14px 56px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;font:700 .92rem system-ui,sans-serif;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.n{opacity:.65;font-weight:600;margin-left:3px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.bar select{width:auto;flex:1 1 140px;font-weight:700;font-size:.92rem;border-radius:10px;padding:8px 13px;box-shadow:3px 3px 0 var(--shadow)}
+.meta{color:var(--muted);font-size:.9rem;margin:6px 0 14px;white-space:pre-line}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:18px 14px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--card);border:2px solid var(--line);border-radius:12px;box-shadow:4px 4px 0 var(--shadow);overflow:hidden}
+.open{flex:1;display:flex;flex-direction:column;width:100%;font:inherit;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer}
+.cover{display:grid;place-items:center;position:relative;width:100%;aspect-ratio:3/4;border-bottom:2px solid var(--line);background-size:cover;background-position:center}
+.cover b{font:800 2.7rem/1 "Bricolage Grotesque",system-ui,sans-serif;color:#fff;text-shadow:3px 3px 0 rgba(0,0,0,.35);letter-spacing:-.03em}
+.tag{position:absolute;left:8px;top:8px;background:#fff;color:#14172b;border:2px solid #14172b;border-radius:6px;padding:1px 7px;font:700 .72rem system-ui,sans-serif}
+.heart{position:absolute;right:6px;top:6px;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.92);color:#14172b;font-size:1.1rem;cursor:pointer}
+.heart[aria-pressed="true"]{color:#e8236b}
+.info{display:grid;gap:5px;align-content:start;padding:10px 10px 12px}
+.ttl{font:600 1rem/1.2 "Bricolage Grotesque",system-ui,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.by{color:var(--muted);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.2em}
+.rate{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.stars{font-size:1rem;letter-spacing:1px;background:linear-gradient(90deg,var(--star) calc(var(--r)*20%),var(--star-off) 0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.st{font-size:.74rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--chip)}
+.st[data-s="andamento"]{background:var(--cta);color:#14172b}
+.st[data-s="concluido"]{background:#2fc47a;color:#04210f}
+dialog{width:min(520px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;padding:0;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:14px;box-shadow:6px 6px 0 var(--shadow)}
+dialog::backdrop{background:rgba(5,6,15,.62)}
+dialog input,dialog select,dialog textarea{background:var(--bg)}
+form{display:grid;gap:12px;padding:16px}
+label,.lb{display:grid;gap:5px;font-weight:700;font-size:.85rem}
+input[type="file"]{padding:7px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rs{display:flex;gap:2px}
+.rs button{font-size:1.9rem;line-height:1;padding:2px 4px;border:0;background:none;color:var(--star-off);cursor:pointer}
+.rs button[aria-pressed="true"]{color:var(--star)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+#derr{margin:0}
+#say{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);text-align:center;font-weight:600}
+#say:empty{display:none}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <div class="top"><h1>Minha Estante</h1><div class="row"><button class="btn" id="data" type="button">Dados</button><button class="btn cta" id="add" type="button">+ Adicionar</button></div></div>
+  <input id="q" type="search" placeholder="Buscar título, autor ou gênero" aria-label="Buscar na estante" autocomplete="off">
+</div></header>
+<main>
+  <div class="tabs" id="tabs"></div>
+  <div class="bar">
+    <select id="fst" aria-label="Filtrar por status"><option value="all">Todos os status</option><option value="fila">Na fila</option><option value="andamento">Em andamento</option><option value="concluido">Concluído</option></select>
+    <select id="sort" aria-label="Ordenar"><option value="new">Mais recentes</option><option value="rate">Maior nota</option><option value="az">Título A a Z</option></select>
+    <button class="btn" id="fav" type="button" aria-pressed="false">♥ Favoritos</button>
+  </div>
+  <p class="meta" id="count"></p>
+  <p class="meta" id="demo" hidden>Estes são exemplos para você ver como fica. <button class="link" id="clr" type="button">Limpar exemplos</button></p>
+  <div class="grid" id="grid"></div>
+  <p class="meta" id="empty" hidden></p>
+</main>
+
+<dialog id="dlg"><form id="f">
+  <h2 id="dt"></h2>
+  <label>Título<input id="tt" required maxlength="80"></label>
+  <label>Autor ou estúdio<input id="cr" maxlength="60"></label>
+  <div class="two">
+    <label>Tipo<select id="ty"><option value="webtoon">Webtoon</option><option value="manga">Mangá</option><option value="video">Vídeo</option></select></label>
+    <label>Status<select id="ss"><option value="fila">Na fila</option><option value="andamento">Em andamento</option><option value="concluido">Concluído</option></select></label>
+  </div>
+  <label>Gênero<input id="ge" maxlength="30" placeholder="Ação, romance, fantasia…"></label>
+  <div class="lb">Sua nota<div class="rs" id="rs"></div></div>
+  <label>Link para ler ou assistir<input id="ln" type="url" placeholder="https://"></label>
+  <label>Capa (opcional)<input id="cv" type="file" accept="image/*"></label>
+  <button class="link" id="cvx" type="button" hidden>Remover capa</button>
+  <label>Anotações<textarea id="nt" rows="3" maxlength="400"></textarea></label>
+  <p class="meta" id="derr" role="alert"></p>
+  <div class="acts">
+    <button class="btn cta" type="submit">Salvar</button>
+    <button class="btn" id="cancel" type="button">Cancelar</button>
+    <button class="btn" id="del" type="button" hidden>Excluir</button>
+    <a class="btn" id="go" hidden target="_blank" rel="noopener noreferrer">Abrir link</a>
+  </div>
+</form></dialog>
+
+<dialog id="ddlg"><form method="dialog">
+  <h2>Dados e backup</h2>
+  <p class="meta" id="dstat"></p>
+  <div class="acts" id="fsbtns">
+    <button class="btn cta" id="mk" type="button">Criar arquivo de backup</button>
+    <button class="btn" id="op" type="button">Abrir arquivo existente</button>
+  </div>
+  <div class="acts">
+    <button class="btn" id="reauth" type="button" hidden>Reautorizar arquivo</button>
+    <button class="btn" id="unl" type="button" hidden>Desvincular</button>
+    <button class="btn" id="exp" type="button">Baixar JSON</button>
+    <label class="btn">Importar JSON<input id="imp" type="file" accept=".json,application/json" hidden></label>
+    <button class="btn" id="persist" type="button" hidden>Proteger armazenamento</button>
+    <button class="btn" id="inst" type="button" hidden>Instalar app</button>
+  </div>
+  <p class="meta">Importar mescla com o que você já tem. As capas vão dentro do JSON.</p>
+  <div class="acts"><button class="btn" type="submit">Fechar</button></div>
+</form></dialog>
+<div id="say" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const TYPES={webtoon:{n:"Webtoon",h:150},manga:{n:"Mangá",h:340},video:{n:"Vídeo",h:250}};
+const STATUS={fila:"Na fila",andamento:"Em andamento",concluido:"Concluído"};
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const seed=()=>[
+  ["Solo Leveling","Chugong e DUBU","webtoon","Ação",5,"concluido"],
+  ["Tower of God","SIU","webtoon","Fantasia",4,"andamento"],
+  ["Vagabond","Takehiko Inoue","manga","Samurai",5,"andamento"],
+  ["Frieren","Yamada e Abe","manga","Fantasia",5,"fila"],
+  ["Arcane","Fortiche","video","Animação",5,"concluido"],
+  ["Cyberpunk: Edgerunners","Studio Trigger","video","Ficção científica",4,"fila"]
+].map((a,i)=>({id:Date.now()+i,title:a[0],creator:a[1],type:a[2],genre:a[3],rating:a[4],status:a[5],fav:i%3===0,demo:true,notes:"",link:"",cover:""}));
+
+/* armazenamento: IndexedDB */
+const idb=typeof indexedDB==="undefined"?Promise.reject(new Error("sem IndexedDB")):new Promise((ok,no)=>{const r=indexedDB.open("estante",1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+idb.catch(()=>{});
+const kvGet=k=>idb.then(d=>new Promise((ok,no)=>{const r=d.transaction("kv").objectStore("kv").get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}));
+const kvSet=(k,v)=>idb.then(d=>new Promise((ok,no)=>{const t=d.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=ok;t.onerror=()=>no(t.error)}));
+const kvDel=k=>idb.then(d=>new Promise((ok,no)=>{const t=d.transaction("kv","readwrite");t.objectStore("kv").delete(k);t.oncomplete=ok;t.onerror=()=>no(t.error)}));
+
+let items=[],handle=null,needAuth=false,persisted=false,deferred=null,tm,timer;
+let q="",tab="all",fst="all",sort="new",fav=false,editing=null,rate=0,coverData="",armed=false;
+const FT=[{description:"Estante (JSON)",accept:{"application/json":[".json"]}}];
+const json=()=>JSON.stringify({app:"estante",version:1,items},null,1);
+function say(m){const el=$("#say");el.textContent=m;clearTimeout(timer);timer=setTimeout(()=>{el.textContent=""},3200)}
+
+function save(){
+  kvSet("items",items).catch(()=>say("Não foi possível salvar neste navegador."));
+  clearTimeout(tm);tm=setTimeout(syncFile,700);
+}
+async function syncFile(){
+  if(!handle)return;
+  try{
+    if(await handle.queryPermission({mode:"readwrite"})!=="granted"){needAuth=true;refreshData();return}
+    const w=await handle.createWritable();await w.write(json());await w.close();
+    needAuth=false;refreshData();
+  }catch(e){say("Não consegui gravar no arquivo vinculado.")}
+}
+function mergeJSON(t){
+  const d=JSON.parse(t),a=Array.isArray(d)?d:d.items;
+  if(!Array.isArray(a))throw new Error("formato");
+  let n=0;
+  for(const o of a){
+    if(!o||!o.title)continue;
+    const it={id:Number(o.id)||Date.now()+n,title:String(o.title),creator:String(o.creator||""),type:TYPES[o.type]?o.type:"webtoon",genre:String(o.genre||""),status:STATUS[o.status]?o.status:"fila",rating:Math.max(0,Math.min(5,o.rating|0)),fav:!!o.fav,link:String(o.link||""),notes:String(o.notes||""),cover:/^data:image\//.test(o.cover||"")?o.cover:""};
+    const i=items.findIndex(x=>x.id===it.id);
+    if(i>=0)items[i]=it;else items.push(it);
+    n++;
+  }
+  save();render();return n;
+}
+
+/* tela */
+function cover(it){
+  const t=TYPES[it.type]||TYPES.webtoon;
+  const h=(t.h+[...it.title].reduce((a,c)=>a+c.charCodeAt(0),0)%40)%360;
+  const img=/^data:image\//.test(it.cover||"");
+  const ini=it.title.split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase();
+  const bg=img?`background-image:url('${it.cover}')`:`background:radial-gradient(rgba(255,255,255,.28) 1.3px,transparent 1.6px) 0 0/9px 9px,linear-gradient(160deg,hsl(${h} 78% 52%),hsl(${(h+45)%360} 70% 32%))`;
+  return `<span class="cover" style="${bg}">${img?"":`<b>${esc(ini)}</b>`}<span class="tag">${t.n}</span></span>`;
+}
+function card(it){
+  return `<article class="card"><button class="open" data-id="${it.id}">${cover(it)}<span class="info"><span class="ttl">${esc(it.title)}</span><span class="by">${esc(it.creator)}</span><span class="rate"><span class="stars" style="--r:${it.rating|0}" aria-hidden="true">★★★★★</span><span>${it.rating?it.rating+"/5":"sem nota"}</span></span><span class="chips"><span class="st" data-s="${esc(it.status)}">${STATUS[it.status]||""}</span>${it.genre?`<span class="st">${esc(it.genre)}</span>`:""}</span></span></button><button class="heart" data-fav="${it.id}" aria-pressed="${!!it.fav}" aria-label="Favoritar ${esc(it.title)}">♥</button></article>`;
+}
+function render(){
+  const nq=norm(q);
+  const list=items.filter(i=>(tab==="all"||i.type===tab)&&(fst==="all"||i.status===fst)&&(!fav||i.fav)&&(!nq||norm([i.title,i.creator,i.genre,i.notes].join(" ")).includes(nq)));
+  list.sort(sort==="rate"?(a,b)=>(b.rating|0)-(a.rating|0)||a.title.localeCompare(b.title,"pt"):sort==="az"?(a,b)=>a.title.localeCompare(b.title,"pt"):(a,b)=>b.id-a.id);
+  const cnt=k=>k==="all"?items.length:items.filter(i=>i.type===k).length;
+  $("#tabs").innerHTML=[["all","Tudo"],["webtoon","Webtoon"],["manga","Mangá"],["video","Vídeos"]].map(([k,n])=>`<button class="tab" data-tab="${k}" aria-pressed="${tab===k}">${n}<span class="n">${cnt(k)}</span></button>`).join("");
+  $("#count").textContent=`${list.length} ${list.length===1?"obra":"obras"}`;
+  $("#demo").hidden=!items.some(i=>i.demo);
+  $("#grid").innerHTML=list.map(card).join("");
+  const em=$("#empty");em.hidden=list.length>0;
+  em.textContent=items.length?"Nada encontrado com esses filtros.":"Sua estante está vazia. Toque em Adicionar para guardar a primeira obra.";
+}
+function refreshData(){
+  const fs="showSaveFilePicker" in window;
+  $("#fsbtns").hidden=!fs;
+  $("#reauth").hidden=!(handle&&needAuth);
+  $("#unl").hidden=!handle;
+  $("#persist").hidden=persisted||!(navigator.storage&&navigator.storage.persist);
+  $("#inst").hidden=!deferred;
+  const file=handle?"Arquivo vinculado: "+handle.name+(needAuth?"\nToque em Reautorizar para voltar a salvar nele.":" (salva sozinho a cada mudança)"):(fs?"Nenhum arquivo vinculado.":"Este navegador não permite vincular arquivo. Use Baixar JSON e Importar JSON.");
+  $("#dstat").textContent=["Armazenamento protegido: "+(persisted?"sim":"não"),file,items.length+" obras neste aparelho"].join("\n");
+}
+
+/* obra: janela de edição */
+function drawRs(){$("#rs").innerHTML=[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v<=rate}" aria-label="${v} de 5">★</button>`).join("")}
+function openDlg(id){
+  editing=id||null;armed=false;
+  const it=items.find(i=>i.id===id)||{type:TYPES[tab]?tab:"webtoon",status:"fila"};
+  $("#dt").textContent=editing?"Editar obra":"Nova obra";
+  $("#tt").value=it.title||"";$("#cr").value=it.creator||"";$("#ty").value=it.type;$("#ss").value=it.status||"fila";
+  $("#ge").value=it.genre||"";$("#ln").value=it.link||"";$("#nt").value=it.notes||"";$("#cv").value="";
+  rate=it.rating||0;coverData=it.cover||"";drawRs();
+  $("#cvx").hidden=!coverData;$("#derr").textContent="";
+  const d=$("#del");d.hidden=!editing;d.textContent="Excluir";
+  const g=$("#go"),ok=/^https?:\/\//i.test(it.link||"");g.hidden=!ok;if(ok)g.href=it.link;
+  $("#dlg").showModal();
+}
+
+$("#q").oninput=e=>{q=e.target.value;render()};
+$("#fst").onchange=e=>{fst=e.target.value;render()};
+$("#sort").onchange=e=>{sort=e.target.value;render()};
+$("#fav").onclick=e=>{fav=!fav;e.currentTarget.setAttribute("aria-pressed",fav);render()};
+$("#tabs").onclick=e=>{const b=e.target.closest("[data-tab]");if(b){tab=b.dataset.tab;render()}};
+$("#grid").onclick=e=>{
+  const h=e.target.closest("[data-fav]");
+  if(h){const it=items.find(i=>String(i.id)===h.dataset.fav);if(it){it.fav=!it.fav;save();render()}return}
+  const o=e.target.closest("[data-id]");if(o)openDlg(+o.dataset.id);
+};
+$("#add").onclick=()=>openDlg();
+$("#clr").onclick=()=>{items=items.filter(i=>!i.demo);save();render()};
+$("#rs").onclick=e=>{const b=e.target.closest("[data-v]");if(b){const v=+b.dataset.v;rate=rate===v?0:v;drawRs()}};
+$("#cv").onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement("canvas");c.width=300;c.height=400;
+      const s=Math.max(300/img.width,400/img.height);
+      c.getContext("2d").drawImage(img,(300-img.width*s)/2,(400-img.height*s)/2,img.width*s,img.height*s);
+      coverData=c.toDataURL("image/jpeg",.82);$("#cvx").hidden=false;$("#derr").textContent="";
+    };
+    img.onerror=()=>{$("#derr").textContent="Não foi possível ler essa imagem. Tente outro arquivo."};
+    img.src=r.result;
+  };
+  r.readAsDataURL(file);
+};
+$("#cvx").onclick=()=>{coverData="";$("#cvx").hidden=true;$("#cv").value=""};
+$("#f").onsubmit=e=>{
+  e.preventDefault();
+  const o={title:$("#tt").value.trim(),creator:$("#cr").value.trim(),type:$("#ty").value,status:$("#ss").value,genre:$("#ge").value.trim(),link:$("#ln").value.trim(),notes:$("#nt").value.trim(),rating:rate,cover:coverData};
+  if(!o.title)return;
+  const was=editing;
+  if(was){const it=items.find(i=>i.id===was);if(it){Object.assign(it,o);delete it.demo}}
+  else items.push(Object.assign({id:Date.now(),fav:false},o));
+  save();$("#dlg").close();render();say(was?"Alterações salvas.":"Obra adicionada.");
+};
+$("#del").onclick=e=>{
+  if(!armed){armed=true;e.currentTarget.textContent="Excluir mesmo?";return}
+  items=items.filter(i=>i.id!==editing);save();$("#dlg").close();render();say("Obra excluída.");
+};
+$("#cancel").onclick=()=>$("#dlg").close();
+$("#dlg").onclick=e=>{if(e.target===e.currentTarget)$("#dlg").close()};
+
+/* dados e backup */
+$("#data").onclick=()=>{refreshData();$("#ddlg").showModal()};
+$("#ddlg").onclick=e=>{if(e.target===e.currentTarget)$("#ddlg").close()};
+$("#mk").onclick=async()=>{
+  try{
+    const h=await showSaveFilePicker({suggestedName:"estante.json",types:FT});
+    handle=h;await kvSet("handle",h);needAuth=false;await syncFile();say("Arquivo vinculado.");
+  }catch(e){if(e.name!=="AbortError")say("Não foi possível vincular o arquivo.")}
+  refreshData();
+};
+$("#op").onclick=async()=>{
+  try{
+    const [h]=await showOpenFilePicker({types:FT});
+    const n=mergeJSON(await (await h.getFile()).text());
+    await h.requestPermission({mode:"readwrite"});
+    handle=h;await kvSet("handle",h);await syncFile();say(n+" obras lidas. Arquivo vinculado.");
+  }catch(e){if(e.name!=="AbortError")say("Esse arquivo não parece um backup da estante.")}
+  refreshData();
+};
+$("#reauth").onclick=async()=>{
+  try{if(await handle.requestPermission({mode:"readwrite"})==="granted")await syncFile()}catch(e){}
+  refreshData();
+};
+$("#unl").onclick=async()=>{handle=null;needAuth=false;try{await kvDel("handle")}catch(e){}refreshData();say("Arquivo desvinculado.")};
+$("#exp").onclick=()=>{
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([json()],{type:"application/json"}));
+  a.download="estante.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+};
+$("#imp").onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{say(mergeJSON(await f.text())+" obras importadas.")}catch(x){say("Esse arquivo não parece um backup da estante.")}
+  e.target.value="";refreshData();
+};
+$("#persist").onclick=()=>{navigator.storage.persist().then(p=>{persisted=p;refreshData();if(!p)say("O Chrome não liberou agora. Instalar o app ajuda.")})};
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;refreshData()});
+$("#inst").onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;refreshData()};
+
+/* início */
+(async()=>{
+  try{
+    const v=await kvGet("items");
+    if(Array.isArray(v))items=v;else{items=seed();await kvSet("items",items)}
+    handle=(await kvGet("handle"))||null;
+  }catch(e){items=seed();say("Armazenamento indisponível neste navegador.")}
+  render();
+  if(navigator.storage&&navigator.storage.persisted)navigator.storage.persisted().then(p=>{persisted=p;refreshData()});
+  if(navigator.storage&&navigator.storage.persist&&!persisted)navigator.storage.persist().then(p=>{persisted=p;refreshData()}).catch(()=>{});
+  if(handle)handle.queryPermission({mode:"readwrite"}).then(p=>{needAuth=p!=="granted";refreshData()}).catch(()=>{});
+  refreshData();
+})();
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
